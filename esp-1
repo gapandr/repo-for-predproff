@@ -1,0 +1,83 @@
+#include <ESP8266WiFi.h>
+#include "DHT.h"
+
+// параметры Wi-Fi
+const char* ssid = "T104-1-2";
+const char* password = "Desyatbukv10";
+
+// Пины
+#define DHTPIN D5
+
+// Использование датчика DHT-11
+#define DHTTYPE DHT11
+
+// Инициализация датчика DHT-11
+DHT dht(DHTPIN, DHTTYPE, 15);
+
+// Хост
+const char* host = "dweet.io";
+
+void setup() {
+  
+  // Указание инициализированного порта
+  Serial.begin(115200);
+  delay(10);
+  
+  // Инициализация датчика
+  dht.begin();
+
+  // Начало подключения Wi-Fi
+  Serial.println();
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");  
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void loop() {
+ 
+  Serial.print("Connecting to ");
+  Serial.println(host);
+  
+  // Использование класса WiFiClient для создания TCP-соединений
+  WiFiClient client;
+  const int httpPort = 80;
+  if (!client.connect(host, httpPort)) {
+    Serial.println("connection failed");
+    return;
+  }
+  
+  // Считывание данных с датчиков
+  int h = dht.readHumidity();
+  int t = dht.readTemperature();
+  int s = map(analogRead(A0),1024,260,0,100);
+
+  
+  // Отправка реквест запроса на сервер
+  client.print(String("GET /dweet/for/ESP8266_1?temperature=") + String(t) + "&humidity=" + String(h) + "&soil=" + String(s) + " HTTP/1.1\r\n" +
+               "Host: " + host + "\r\n" + 
+               "Connection: close\r\n\r\n");
+  delay(10);
+  
+  // Чтение полученных данных с датчиков
+  while(client.available()){
+    String line = client.readStringUntil('\r');
+    Serial.print(line);
+  }
+  
+  Serial.println();
+  Serial.println("closing connection");
+  
+  // Повтор каждые 10 секунд.
+  delay(10000);
+ 
+}
