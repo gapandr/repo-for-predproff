@@ -1,0 +1,14 @@
+#test_btn 
+{
+    display: none;
+}
+
+.temp_detector 
+{
+    color: red;
+}
+
+.hum_detector 
+{
+    color: blue;
+}
