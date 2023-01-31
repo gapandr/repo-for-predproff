@@ -11,6 +11,8 @@ float temp1 = 0.0;
 float hum1 = 0.0;
 float temp2 = 0.0;
 float hum2 = 0.0;
+float soil1 = 0.0;
+float soil2 = 0.0;
 
 /* Настройки IP адреса */
 IPAddress local_ip(10,100,1,1);
@@ -64,6 +66,12 @@ void setup() {
       });
     server.on("/hum2", []() {
         server.send(200, "text/plain", String(hum2));
+      });
+    server.on("/soil1", []() {
+        server.send(200, "text/plain", String(soil1));
+      });
+    server.on("/soil2", []() {
+        server.send(200, "text/plain", String(soil2));
       });
 
     server.begin(); //Запускаем сервер
