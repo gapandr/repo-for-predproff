@@ -2,6 +2,8 @@ var temp1 = "default";
 var temp2 = "default";
 var hum1 = "default";
 var hum2 = "default";
+var soil1 = "default";
+var soil2 = "default";
 var response = new Response();
 
 var debug_mode = false;
@@ -30,6 +32,12 @@ function UpdateTest() {
 
     if (hum2=="default") hum2 = 0.0;
     hum2+=Math.random()*5-2.5;
+    
+    if (soil1=="default") soil1 = 0.0;
+    soil1+=Math.random()*5-2.5;
+    
+    if (soil2=="default") soil2 = 0.0;
+    soil2+=Math.random()*5-2.5;
 }
 
 function AutoUpdate() {
@@ -60,6 +68,20 @@ function AutoUpdate() {
         hum2 = response.text();
     }
     document.getElementById("hum2").innerHTML = hum2.toFixed(2);
+    
+    //soil1
+    if (!debug_mode) {
+        response = fetch("/soil1");
+        soil1 = response.text();
+    }
+    document.getElementById("soil1").innerHTML = soil1.toFixed(2);
+    
+    //soil2
+    if (!debug_mode) {
+        response = fetch("/soil2");
+        soil2 = response.text();
+    }
+    document.getElementById("soil2").innerHTML = soil2.toFixed(2);
 }
 
 setInterval(AutoUpdate, 500);
