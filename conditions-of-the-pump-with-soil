@@ -10,7 +10,7 @@ void setup() {
 void loop() {
   output_value = analogRead(A0); 
   output_value = map(output_value,1024,260,0,100); 
-  if (output_value < 0) { #Вместо нуля надо поставить значение сухой почвы
+  if (output_value < 0) { // Вместо нуля надо поставить значение сухой почвы
     Serial.println("Датчик сработал");
     digitalWrite(PIN_RELAY, LOW);
     delay(100); // Включаем реле - посылаем низкий уровень сигнала
