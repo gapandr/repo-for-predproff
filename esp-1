@@ -6,7 +6,8 @@ const char* ssid = "T104-1-2";
 const char* password = "Desyatbukv10";
 
 // Пины
-#define DHTPIN D5
+#define DHTPIN D5 // Датчик температуры
+#define PIN_RELAY D7 // Реле
 
 // Использование датчика DHT-11
 #define DHTTYPE DHT11
@@ -17,12 +18,19 @@ DHT dht(DHTPIN, DHTTYPE, 15);
 // Хост
 const char* host = "dweet.io";
 
+// Переменные
+int output_value;
+
+
 void setup() {
-  
   // Указание инициализированного порта
   Serial.begin(115200);
   delay(10);
-  
+
+  // Инициализация реле для полива почвы
+  pinMode(PIN_RELAY, OUTPUT); // Объявляем пин реле как выход
+  digitalWrite(PIN_RELAY, HIGH); // Выключаем реле - посылаем высокий сигнал
+
   // Инициализация датчика
   dht.begin();
 
@@ -74,6 +82,15 @@ void loop() {
     Serial.print(line);
   }
   
+  // Условие полива почвы, зависящее от показания датчика влажности почвы
+  if (output_value < 0) { // Вместо нуля надо поставить значение сухой почвы
+    digitalWrite(PIN_RELAY, LOW);
+    delay(100); // Включаем реле - посылаем низкий уровень сигнала
+  } else {
+    digitalWrite(PIN_RELAY, HIGH); // Выключаем реле - посылаем высокий сигнал
+    delay(100);
+  }
+
   Serial.println();
   Serial.println("closing connection");
   
