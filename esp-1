@@ -1,5 +1,6 @@
 #include <ESP8266WiFi.h>
 #include "DHT.h"
+#include <espnow.h>
 
 // параметры Wi-Fi
 const char* ssid = "T104-1-2";
@@ -16,11 +17,30 @@ const char* password = "Desyatbukv10";
 DHT dht(DHTPIN, DHTTYPE, 15);
 
 // Хост
-const char* host = "dweet.io";
+//const char* host = "dweet.io";
 
 // Переменные
 int output_value;
 
+/* Mac адреса других плат */
+uint8_t Address3[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; //esp3
+
+/* Передаваемые данные */
+typedef struct message {
+    float temp;
+    float hum;
+} message;
+message Data;
+
+void DataSent(uint8_t *mac_addr, uint8_t sendStatus) { //Функция при отправке данных (отладочная информация)
+  Serial.print("Last Packet Send Status: ");
+  if (sendStatus == 0){
+    Serial.println("Delivery success");
+  }
+  else{
+    Serial.println("Delivery fail");
+  }
+}
 
 void setup() {
   // Указание инициализированного порта
@@ -49,38 +69,56 @@ void setup() {
   Serial.println("WiFi connected");  
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+
+  esp_now_init(); //Инициилизируем протокол esp now
+  esp_now_set_self_role(ESP_NOW_ROLE_COMBO); //Устанавливаем роль combo, чтобы мы могли и отправлять и принимать данные
+  esp_now_add_peer(Address3, ESP_NOW_ROLE_COMBO, 1, NULL, 0); //Добавляем нового пира (esp3), чтобы мы могли отправлять данные 
+  esp_now_register_send_cb(DataSent); //Устанавливаем функцию DataSent при отправке данных
 }
 
 void loop() {
- 
+  /*
   Serial.print("Connecting to ");
   Serial.println(host);
+  */
   
   // Использование класса WiFiClient для создания TCP-соединений
+  /*
   WiFiClient client;
   const int httpPort = 80;
   if (!client.connect(host, httpPort)) {
     Serial.println("connection failed");
     return;
   }
+  */
   
   // Считывание данных с датчиков
   int h = dht.readHumidity();
   int t = dht.readTemperature();
   int s = map(analogRead(A0),1024,260,0,100);
 
+  //Записываем данные в переменную Data
+  Data.temp = t;
+  Data.hum = h;
+
+  //Отправляем данные на esp3
+  esp_now_send(Address3, (uint8_t *) &Data, sizeof(Data));
   
   // Отправка реквест запроса на сервер
+  /*
   client.print(String("GET /dweet/for/ESP8266_1?temperature=") + String(t) + "&humidity=" + String(h) + "&soil=" + String(s) + " HTTP/1.1\r\n" +
                "Host: " + host + "\r\n" + 
                "Connection: close\r\n\r\n");
   delay(10);
+  */
   
   // Чтение полученных данных с датчиков
+  /*
   while(client.available()){
     String line = client.readStringUntil('\r');
     Serial.print(line);
   }
+  */
   
   // Условие полива почвы, зависящее от показания датчика влажности почвы
   if (output_value < 0) { // Вместо нуля надо поставить значение сухой почвы
@@ -91,8 +129,10 @@ void loop() {
     delay(100);
   }
 
+  /*
   Serial.println();
   Serial.println("closing connection");
+  */
   
   // Повтор каждые 10 секунд.
   delay(10000);
