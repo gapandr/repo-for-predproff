@@ -1,6 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <LittleFS.h>
+#include <espnow.h>
 
 /* Название сети и пароль */
 const char* ssid = "Теплица";       // SSID
@@ -19,7 +20,33 @@ IPAddress local_ip(10,100,1,1);
 IPAddress gateway(10,100,1,1);
 IPAddress subnet(255,255,255,0);
 
+/* Mac адреса других плат */
+uint8_t Address1[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; //esp1
+uint8_t Address2[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; //esp2
+
 ESP8266WebServer server(80); //Cоздаём сервер
+
+/* Передаваемые данные */
+typedef struct message {
+    float temp;
+    float hum;
+} message;
+message Data;
+
+void DataRecived(uint8_t * mac, uint8_t *incomingData, uint8_t len) //Функция для обработки принимаемой информации
+{
+  memcpy(&Data, incomingData, sizeof(Data)); //Копируем полученную информацию в переменную Data (чтобы корректно её обработать)
+  if (mac == Address1) //Если информация получена с esp1, записываем информацию в переменные temp1, hum1
+  {
+    temp1 = Data.temp;
+    hum1 = Data.hum;
+  }
+  else //Иначе (информация получена с esp2), записываем информацию в переменные temp2, hum2
+  {
+    temp2 = Data.temp;
+    hum2 = Data.hum;
+  }
+}
 
 void handleRoot() //Клиент делает запрос на сервер
 {
@@ -75,6 +102,10 @@ void setup() {
       });
 
     server.begin(); //Запускаем сервер
+
+    esp_now_init(); //Инициилизируем протокол esp now
+    esp_now_set_self_role(ESP_NOW_ROLE_COMBO); //Устанавливаем роль combo, чтобы мы могли и отправлять и принимать данные
+    esp_now_register_recv_cb(DataRecived); //Устанавливаем функцию DataRecived для обработки принимаемой информации
 }
 
 void loop() {
