@@ -1,0 +1,34 @@
+#include "DHT.h"
+#include <AccelStepper.h>
+
+#define DHTPIN D7
+#define DHTTYPE DHT11
+#define IN1 5
+#define IN2 4
+#define IN3 14
+#define IN4 12
+
+DHT dht(DHTPIN, DHTTYPE, 15);
+AccelStepper stepper(AccelStepper::HALF4WIRE, IN1, IN3, IN2, IN4);
+const int stepsPerRevolution = 2048;
+
+void setup() {
+  Serial.begin(115200);
+  dht.begin();
+
+  // set the speed and acceleration
+  stepper.setMaxSpeed(500);
+  stepper.setAcceleration(100);
+  // set target position
+  stepper.moveTo(stepsPerRevolution);
+}
+
+void loop() {
+  
+  if (stepper.distanceToGo() == 0){
+    stepper.moveTo(-stepper.currentPosition());
+    Serial.println("Changing direction");
+  }
+  // move the stepper motor (one step at a time)
+  stepper.run();
+}
