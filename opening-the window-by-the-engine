@@ -1,7 +1,7 @@
 #include "DHT.h"
 #include <AccelStepper.h>
 
-#define DHTPIN D7
+#define DHTPIN 13
 #define DHTTYPE DHT11
 #define IN1 5
 #define IN2 4
@@ -17,18 +17,44 @@ void setup() {
   dht.begin();
 
   // set the speed and acceleration
-  stepper.setMaxSpeed(500);
-  stepper.setAcceleration(100);
+  stepper.setMaxSpeed(200);
+  stepper.setAcceleration(40);
   // set target position
-  stepper.moveTo(stepsPerRevolution);
+  stepper.moveTo(512);
+
+}
+
+void open(){
+  stepper.moveTo(512);
+  while (stepper.currentPosition() != 512)
+    stepper.run();
+  stepper.stop();
+  stepper.runToPosition();
+  stepper.stop();
+}
+
+void close() {
+  stepper.moveTo(-stepper.currentPosition());
+  while (stepper.currentPosition() != 512) 
+    stepper.run();
+  stepper.stop(); 
+  stepper.runToPosition();
+  stepper.stop();
 }
 
 void loop() {
-  
-  if (stepper.distanceToGo() == 0){
-    stepper.moveTo(-stepper.currentPosition());
-    Serial.println("Changing direction");
+  int elevated_temp = 28;
+  float actual_temp = dht.readTemperature();
+  Serial.print(actual_temp);
+
+  if (actual_temp >= elevated_temp) {
+    open();
+    delay(60000);
   }
-  // move the stepper motor (one step at a time)
-  stepper.run();
+  else if (actual_temp < elevated_temp){
+    close();
+    delay(60000);
+  }
+  
+  delay(50);
 }
