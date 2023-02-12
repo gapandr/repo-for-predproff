@@ -31,6 +31,7 @@ void open(){
   stepper.stop();
   stepper.runToPosition();
   stepper.stop();
+  delay(300000);
 }
 
 void close() {
@@ -40,6 +41,7 @@ void close() {
   stepper.stop(); 
   stepper.runToPosition();
   stepper.stop();
+  delay(300000);
 }
 
 void loop() {
@@ -49,11 +51,9 @@ void loop() {
 
   if (actual_temp >= elevated_temp) {
     open();
-    delay(60000);
   }
   else if (actual_temp < elevated_temp){
     close();
-    delay(60000);
   }
   
   delay(50);
