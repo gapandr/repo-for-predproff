@@ -51,6 +51,16 @@ void DataRecived(uint8_t * mac, uint8_t *incomingData, uint8_t len) //Функц
   }
 }
 
+void DataSent(uint8_t *mac_addr, uint8_t sendStatus) { //Функция при отправке данных (отладочная информация)
+  Serial.print("Last Packet Send Status: ");
+  if (sendStatus == 0){
+    Serial.println("Delivery success");
+  }
+  else{
+    Serial.println("Delivery fail");
+  }
+}
+
 void handleRoot() //Клиент делает запрос на сервер
 {
     File html = LittleFS.open("/index.html", "r"); //Получаем html файл из файловой системы
@@ -109,8 +119,15 @@ void setup() {
     esp_now_init(); //Инициилизируем протокол esp now
     esp_now_set_self_role(ESP_NOW_ROLE_COMBO); //Устанавливаем роль combo, чтобы мы могли и отправлять и принимать данные
     esp_now_register_recv_cb(DataRecived); //Устанавливаем функцию DataRecived для обработки принимаемой информации
+    esp_now_add_peer(Address1, ESP_NOW_ROLE_COMBO, 1, NULL, 0); //Добавляем нового пира (esp1), чтобы мы могли отправлять команды
+    esp_now_add_peer(Address2, ESP_NOW_ROLE_COMBO, 1, NULL, 0); //Добавляем нового пира (esp2), чтобы мы могли отправлять команды
+    esp_now_register_send_cb(DataSent); //Устанавливаем функцию DataSent при отправке данных
 }
 
 void loop() {
   server.handleClient();  //Отслеживаем действия клиента
+    
+    
+  
+  delay(10000);
 }
