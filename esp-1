@@ -78,21 +78,6 @@ void setup() {
 }
 
 void loop() {
-  /*
-  Serial.print("Connecting to ");
-  Serial.println(host);
-  */
-  
-  // Использование класса WiFiClient для создания TCP-соединений
-  /*
-  WiFiClient client;
-  const int httpPort = 80;
-  if (!client.connect(host, httpPort)) {
-    Serial.println("connection failed");
-    return;
-  }
-  */
-  
   // Считывание данных с датчиков
   int h = dht.readHumidity();
   int t = dht.readTemperature();
@@ -106,22 +91,6 @@ void loop() {
   //Отправляем данные на esp3
   esp_now_send(Address3, (uint8_t *) &Data, sizeof(Data));
   
-  // Отправка реквест запроса на сервер
-  /*
-  client.print(String("GET /dweet/for/ESP8266_1?temperature=") + String(t) + "&humidity=" + String(h) + "&soil=" + String(s) + " HTTP/1.1\r\n" +
-               "Host: " + host + "\r\n" + 
-               "Connection: close\r\n\r\n");
-  delay(10);
-  */
-  
-  // Чтение полученных данных с датчиков
-  /*
-  while(client.available()){
-    String line = client.readStringUntil('\r');
-    Serial.print(line);
-  }
-  */
-  
   // Условие полива почвы, зависящее от показания датчика влажности почвы
   if (s < 0) { // Вместо нуля надо поставить значение сухой почвы
     digitalWrite(PIN_RELAY, LOW);
@@ -131,11 +100,6 @@ void loop() {
     delay(100);
   }
 
-  /*
-  Serial.println();
-  Serial.println("closing connection");
-  */
-  
   // Повтор каждые 10 секунд.
   delay(10000);
  
