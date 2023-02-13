@@ -50,11 +50,11 @@ void loop() {
   Serial.print(actual_temp);
 
   if (actual_temp >= elevated_temp) {
-    open();
+    stepper.runToNewPosition(512);
   }
-  else if (actual_temp < elevated_temp){
-    close();
+  else {
+    stepper.runToNewPosition(0);
   }
   
-  delay(50);
+  delay(1000);
 }
