@@ -30,6 +30,7 @@ ESP8266WebServer server(80); //Cоздаём сервер
 typedef struct message {
     float temp;
     float hum;
+    float soil;
 } message;
 message Data;
 
@@ -40,11 +41,13 @@ void DataRecived(uint8_t * mac, uint8_t *incomingData, uint8_t len) //Функц
   {
     temp1 = Data.temp;
     hum1 = Data.hum;
+    soil1 = Data.soil;
   }
   else //Иначе (информация получена с esp2), записываем информацию в переменные temp2, hum2
   {
     temp2 = Data.temp;
     hum2 = Data.hum;
+    soil2 = Data.soil;
   }
 }
 
