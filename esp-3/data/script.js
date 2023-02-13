@@ -20,6 +20,10 @@ function DebugMode() {
     }
 }
 
+function SetAngle(angle) {
+    fetch("/angle"+angle)
+}
+
 function UpdateTest() {
     if (temp1=="default") temp1 = 0.0;
     temp1+=Math.random()*5-2.5;
