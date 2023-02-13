@@ -75,7 +75,7 @@ void loop() {
   // Считывание данных с датчиков
   int h = dht.readHumidity();
   int t = dht.readTemperature();
-  int s = map(analogRead(A0),1024,260,0,100);
+  int s = map(analogRead(A0),1024,345,0,100); // для датчика №2
 
   //Записываем данные в переменную Data
   Data.temp = t;
