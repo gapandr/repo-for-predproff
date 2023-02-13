@@ -29,6 +29,7 @@ uint8_t Address3[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; //esp3
 typedef struct message {
     float temp;
     float hum;
+    float soil;
 } message;
 message Data;
 
@@ -100,6 +101,7 @@ void loop() {
   //Записываем данные в переменную Data
   Data.temp = t;
   Data.hum = h;
+  Data.soil = s;
 
   //Отправляем данные на esp3
   esp_now_send(Address3, (uint8_t *) &Data, sizeof(Data));
