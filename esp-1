@@ -16,12 +16,6 @@ const char* password = "Desyatbukv10";
 // Инициализация датчика DHT-11
 DHT dht(DHTPIN, DHTTYPE, 15);
 
-// Хост
-//const char* host = "dweet.io";
-
-// Переменные 
-// int output_value;
-
 /* Mac адреса других плат */
 uint8_t Address3[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; //esp3
 
