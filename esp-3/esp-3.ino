@@ -14,6 +14,7 @@ float temp2 = 0.0;
 float hum2 = 0.0;
 float soil1 = 0.0;
 float soil2 = 0.0;
+int angle = 0;
 
 /* Настройки IP адреса */
 IPAddress local_ip(10,100,1,1);
@@ -113,7 +114,23 @@ void setup() {
     server.on("/soil2", []() {
         server.send(200, "text/plain", String(soil2));
       });
-
+    //Управление форточкой
+    server.on("/angle0", []() {
+        angle = 0;
+      });
+    server.on("/angle30", []() {
+        angle = 30;
+      });
+    server.on("/angle45", []() {
+        angle = 45;
+      });
+    server.on("/angle90", []() {
+        angle = 90;
+      });
+    server.on("/angle110", []() {
+        angle = 110;
+      });
+    
     server.begin(); //Запускаем сервер
 
     esp_now_init(); //Инициилизируем протокол esp now
@@ -128,6 +145,13 @@ void loop() {
   server.handleClient();  //Отслеживаем действия клиента
     
     
+  if ((temp1+temp2)/2>=28){
+    angle = 90;
+  }
+  else {
+    angle = 0;
+  }
   
+  esp_now_send(Address1, (int *) &angle, sizeof(angle));
   delay(10000);
 }
