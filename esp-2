@@ -1,0 +1,44 @@
+#include "DHT.h"
+#include <AccelStepper.h>
+
+#define DHTPIN 13
+#define DHTTYPE DHT11
+#define IN1 5
+#define IN2 4
+#define IN3 14
+#define IN4 12
+
+DHT dht(DHTPIN, DHTTYPE, 15);
+AccelStepper stepper(AccelStepper::HALF4WIRE, IN1, IN3, IN2, IN4);
+const int stepsPerRevolution = 2048;
+int output_value;
+
+
+
+void setup() {
+  Serial.begin(115200);
+  dht.begin();
+
+  // set the speed and acceleration
+  stepper.setMaxSpeed(200);
+  stepper.setAcceleration(40);
+  // set target position
+
+}
+
+void loop() {
+  output_value = analogRead(A0);
+  output_value = map(output_value,1024,330,0,100); // для датчика №1
+  int elevated_temp = 28;
+  float actual_temp = dht.readTemperature();
+  Serial.print(actual_temp);
+
+  if (actual_temp >= elevated_temp) {
+    stepper.runToNewPosition(1024);
+  }
+  else {
+    stepper.runToNewPosition(0);
+  }
+  
+  delay(1000);
+}
