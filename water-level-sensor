@@ -1,0 +1,35 @@
+// Контакты датчика
+#define sensorPower 14
+#define sensorPin A0
+
+// Значение для хранения уровня воды
+int val = 0;
+
+void setup() {
+	// Установите D5 в качестве выходного
+	pinMode(sensorPower, OUTPUT);
+	
+	// Установите на низкий уровень, чтобы через датчик не протекала мощность
+	digitalWrite(sensorPower, LOW);
+	
+	Serial.begin(115200);
+}
+
+void loop() {
+	//получите показания из приведенной ниже функции и распечатайте их
+	int level = readSensor();
+	
+	Serial.print("Water level: ");
+	Serial.println(level);
+	
+	delay(1000);
+}
+
+//Это функция, используемая для получения показаний
+int readSensor() {
+	digitalWrite(sensorPower, HIGH);	// Включение датчика
+	delay(10);							// ждём 10 миллисекунд
+	val = analogRead(sensorPin);		// Чтение значений с датчика
+  val = map(val, 12, 106, 0, 100);
+	digitalWrite(sensorPower, LOW);		// Выключение датчика
+	return val;							// Отправка текущего значения
