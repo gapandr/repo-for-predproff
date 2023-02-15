@@ -16,6 +16,14 @@ float soil1 = 0.0;
 float soil2 = 0.0;
 int angle = 0;
 
+// Объявление контаков датчиков 
+#define sensorPower 14
+#define sensorPin A0
+#define PIN_RELAY D6
+
+// Значение для хранения уровня воды
+int val = 0;
+
 /* Настройки IP адреса */
 IPAddress local_ip(10,100,1,1);
 IPAddress gateway(10,100,1,1);
@@ -62,6 +70,16 @@ void DataSent(uint8_t *mac_addr, uint8_t sendStatus) { //Функция при �
   }
 }
 
+//Это функция, используемая для получения показаний
+int readSensor() {
+	digitalWrite(sensorPower, HIGH);	// Включение датчика
+	delay(10);							// ждём 10 миллисекунд
+	val = analogRead(sensorPin);		// Чтение значений с датчика
+  val = map(val, 12, 106, 0, 100);
+	digitalWrite(sensorPower, LOW);		// Выключение датчика
+	return val;							// Отправка текущего значения
+}
+
 void handleRoot() //Клиент делает запрос на сервер
 {
     File html = LittleFS.open("/index.html", "r"); //Получаем html файл из файловой системы
@@ -86,6 +104,18 @@ void setup() {
     WiFi.softAP(ssid, password);
     WiFi.softAPConfig(local_ip, gateway, subnet);
     delay(100);
+
+    // Объявляем пин реле как выход
+    pinMode(PIN_RELAY, OUTPUT); 
+  
+    // Выключаем реле - посылаем высокий сигнал (для реле)
+    digitalWrite(PIN_RELAY, HIGH);  
+
+	  // Установите D5 в качестве выходного
+	  pinMode(sensorPower, OUTPUT);
+	
+	  // Установите на низкий уровень, чтобы через датчик не протекала мощность (для уровня воды)
+	  digitalWrite(sensorPower, LOW);
 
     /* Подключаем файловую систему */
     LittleFS.begin();
@@ -144,13 +174,19 @@ void setup() {
 void loop() {
   server.handleClient();  //Отслеживаем действия клиента
     
-    
-  if ((temp1+temp2)/2>=28){
-    angle = 90;
+  if ((temp1+temp2)/2 > 30){ // Реле с поливом, зависящая от температуры
+    digitalWrite(PIN_RELAY, LOW);
+    delay(100);
+  } else {
+    digitalWrite(PIN_RELAY, HIGH);
+    delay(100);
   }
-  else {
-    angle = 0;
-  }
+
+  //получите показания из приведенной ниже функции (датчик воды)
+	int level = readSensor();
+	Serial.print("Water level: ");
+	Serial.println(level);
+	delay(1000);
   
   esp_now_send(Address1, (int *) &angle, sizeof(angle));
   delay(10000);
