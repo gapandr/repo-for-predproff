@@ -33,7 +33,7 @@ IPAddress subnet(255,255,255,0);
 
 /* Mac адреса других плат */
 uint8_t Address1[] = {58:bf:25:da:9c:3e}; //esp1
-uint8_t Address2[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; //esp2
+uint8_t Address2[] = {bc:dd:c2:66:80:a9}; //esp2
 
 ESP8266WebServer server(80); //Cоздаём сервер
 
