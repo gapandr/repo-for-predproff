@@ -32,7 +32,7 @@ IPAddress gateway(10,100,1,1);
 IPAddress subnet(255,255,255,0);
 
 /* Mac адреса других плат */
-uint8_t Address1[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; //esp1
+uint8_t Address1[] = {58:bf:25:da:9c:3e}; //esp1
 uint8_t Address2[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; //esp2
 
 ESP8266WebServer server(80); //Cоздаём сервер
