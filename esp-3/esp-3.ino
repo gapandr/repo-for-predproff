@@ -15,6 +15,8 @@ float hum2 = 0.0;
 float soil1 = 0.0;
 float soil2 = 0.0;
 int angle = 0;
+int min_soil = 30;
+int humid = 0;
 
 // Объявление контаков датчиков 
 #define sensorPower 14
@@ -75,7 +77,7 @@ int readSensor() {
 	digitalWrite(sensorPower, HIGH);	// Включение датчика
 	delay(10);							// ждём 10 миллисекунд
 	val = analogRead(sensorPin);		// Чтение значений с датчика
-  val = map(val, 12, 106, 0, 100);
+  	val = map(val, 12, 106, 0, 100);
 	digitalWrite(sensorPower, LOW);		// Выключение датчика
 	return val;							// Отправка текущего значения
 }
@@ -174,7 +176,7 @@ void setup() {
 void loop() {
   server.handleClient();  //Отслеживаем действия клиента
     
-  if ((temp1+temp2)/2 > 30){ // Реле с поливом, зависящая от температуры
+  if ((soil1+soil2)/2 > min_soil){ // Реле с поливом, зависящая от температуры
     digitalWrite(PIN_RELAY, LOW);
     delay(100);
   } else {
@@ -182,12 +184,13 @@ void loop() {
     delay(100);
   }
 
-  //получите показания из приведенной ниже функции (датчик воды)
-	int level = readSensor();
-	Serial.print("Water level: ");
-	Serial.println(level);
-	delay(1000);
-  
   esp_now_send(Address1, (int *) &angle, sizeof(angle));
+	if ((hum1+hum2)/2 < min_hum) {
+		humid = 1;
+	}
+	else {
+		humid = 0;
+	}
+	esp_now_send(Address2, (int *) &humid, sizeof(humid));
   delay(10000);
 }
