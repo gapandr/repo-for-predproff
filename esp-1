@@ -21,8 +21,6 @@ const int stepsPerRevolution = 2048;
 
 // Инициализация датчика DHT-11
 DHT dht(DHTPIN, DHTTYPE, 15);
-AccelStepper stepper(AccelStepper::HALF4WIRE, IN1, IN3, IN2, IN4);
-const int stepsPerRevolution = 2048;
 int output_value;
 
 /* Mac адреса других плат */
