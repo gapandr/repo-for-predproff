@@ -1,0 +1,105 @@
+#include <ESP8266WiFi.h>
+#include "DHT.h"
+#include <espnow.h>
+#include <AccelStepper.h>
+
+// параметры Wi-Fi
+const char* ssid = "T104-1-2";
+const char* password = "Desyatbukv10";
+
+// Пины
+#define DHTPIN 13
+#define IN1 5
+#define IN2 4
+#define IN3 14
+#define IN4 12
+
+// Использование датчика DHT-11
+#define DHTTYPE DHT11
+AccelStepper stepper(AccelStepper::HALF4WIRE, IN1, IN3, IN2, IN4);
+const int stepsPerRevolution = 2048;
+
+// Инициализация датчика DHT-11
+DHT dht(DHTPIN, DHTTYPE, 15);
+AccelStepper stepper(AccelStepper::HALF4WIRE, IN1, IN3, IN2, IN4);
+const int stepsPerRevolution = 2048;
+int output_value;
+
+/* Mac адреса других плат */
+uint8_t Address3[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; //esp3
+
+/* Передаваемые данные */
+typedef struct message {
+    float temp;
+    float hum;
+    float soil;
+} message;
+message Data;
+
+void DataSent(uint8_t *mac_addr, uint8_t sendStatus) { //Функция при отправке данных (отладочная информация)
+  Serial.print("Last Packet Send Status: ");
+  if (sendStatus == 0){
+    Serial.println("Delivery success");
+  }
+  else{
+    Serial.println("Delivery fail");
+  }
+}
+
+void DataRecived(uint8_t * mac, int *incomingData, uint8_t len) //Функция для обработки принимаемой информации
+{
+  stepper.runToNewPosition(incomingData/360*stepsPerRevolution);
+}
+
+void setup() {
+  // Указание инициализированного порта
+  Serial.begin(115200);
+  delay(10);
+
+  // set the speed and acceleration
+  stepper.setMaxSpeed(200);
+  stepper.setAcceleration(40);
+
+  // Инициализация датчика
+  dht.begin();
+
+  // Начало подключения Wi-Fi
+  Serial.println();
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");  
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+
+  esp_now_init(); //Инициилизируем протокол esp now
+  esp_now_set_self_role(ESP_NOW_ROLE_COMBO); //Устанавливаем роль combo, чтобы мы могли и отправлять и принимать данные
+  esp_now_add_peer(Address3, ESP_NOW_ROLE_COMBO, 1, NULL, 0); //Добавляем нового пира (esp3), чтобы мы могли отправлять данные 
+  esp_now_register_send_cb(DataSent); //Устанавливаем функцию DataSent при отправке данных
+}
+
+void loop() {
+  // Считывание данных с датчиков
+  int h = dht.readHumidity();
+  int t = dht.readTemperature();
+  int s = map(analogRead(A0),1024,345,0,100); // для датчика №2
+
+  //Записываем данные в переменную Data
+  Data.temp = t;
+  Data.hum = h;
+  Data.soil = s;
+
+  //Отправляем данные на esp3
+  esp_now_send(Address3, (uint8_t *) &Data, sizeof(Data));
+
+  // Повтор каждые 10 секунд.
+  delay(10000);
+ 
+}
