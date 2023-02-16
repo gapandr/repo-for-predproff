@@ -66,10 +66,11 @@ void DataRecived(uint8_t * mac, uint8_t *incomingData, uint8_t len) //Функц
 void DataSent(uint8_t *mac_addr, uint8_t sendStatus) { //Функция при отправке данных (отладочная информация)
   Serial.print("Last Packet Send Status: ");
   if (sendStatus == 0){
-    Serial.println("Delivery success");
+    Serial.print("Delivery success to ");
   }
   else{
-    Serial.println("Delivery fail");
+    Serial.print("Delivery fail to ");
+	Serial.println(mac_addr)
   }
 }
 
