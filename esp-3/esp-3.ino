@@ -16,6 +16,7 @@ float soil1 = 0.0;
 float soil2 = 0.0;
 int angle = 0;
 int min_soil = 30;
+int min_hum = 25;
 int humid = 0;
 
 // Объявление контаков датчиков 
@@ -32,8 +33,8 @@ IPAddress gateway(10,100,1,1);
 IPAddress subnet(255,255,255,0);
 
 /* Mac адреса других плат */
-uint8_t Address1[] = {58:bf:25:da:9c:3e}; //esp1
-uint8_t Address2[] = {bc:dd:c2:66:80:a9}; //esp2
+uint8_t Address1[] = {0x58,0xBF,0x25,0xDA,0x9C,0x3E}; //esp1
+uint8_t Address2[] = {0xBC,0xDD,0xC2,0x66,0x80,0xA9}; //esp2
 
 ESP8266WebServer server(80); //Cоздаём сервер
 
@@ -184,13 +185,13 @@ void loop() {
     delay(100);
   }
 
-  esp_now_send(Address1, (int *) &angle, sizeof(angle));
+  esp_now_send(Address1, (uint8_t *) &angle, sizeof(angle));
 	if ((hum1+hum2)/2 < min_hum) {
 		humid = 1;
 	}
 	else {
 		humid = 0;
 	}
-	esp_now_send(Address2, (int *) &humid, sizeof(humid));
+	esp_now_send(Address2, (uint8_t *) &humid, sizeof(humid));
   delay(10000);
 }
