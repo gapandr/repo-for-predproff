@@ -4,8 +4,8 @@
 #include <AccelStepper.h>
 
 // параметры Wi-Fi
-const char* ssid = "T104-1-2";
-const char* password = "Desyatbukv10";
+const char* ssid = "Теплица";
+const char* password = "12345678";
 
 // Пины
 #define DHTPIN 13
