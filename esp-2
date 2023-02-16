@@ -3,8 +3,8 @@
 #include <espnow.h>
 
 // параметры Wi-Fi
-const char* ssid = "T104-1-2";
-const char* password = "Desyatbukv10";
+const char* ssid = "Теплица";
+const char* password = "12345678";
 
 // Пины
 #define DHTPIN D5 // Датчик температуры
@@ -17,7 +17,7 @@ const char* password = "Desyatbukv10";
 DHT dht(DHTPIN, DHTTYPE, 15);
 
 /* Mac адреса других плат */
-uint8_t Address3[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; //esp3
+uint8_t Address3[] = {0xA8, 0x48, 0xFA, 0xDC, 0xBD, 0x02}; //esp3
 
 /* Передаваемые данные */
 typedef struct message {
@@ -99,5 +99,4 @@ void loop() {
 
   // Повтор каждые 10 секунд.
   delay(10000);
- 
 }
