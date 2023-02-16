@@ -24,7 +24,7 @@ DHT dht(DHTPIN, DHTTYPE, 15);
 int output_value;
 
 /* Mac адреса других плат */
-uint8_t Address3[] = {}; //esp3
+uint8_t Address3[] = {0xA8, 0x48, 0xFA, 0xDC, 0xBD, 0x02}; //esp3
 
 /* Передаваемые данные */
 typedef struct message {
