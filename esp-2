@@ -37,9 +37,9 @@ void DataSent(uint8_t *mac_addr, uint8_t sendStatus) { //Функция при �
   }
 }
 
-void DataRecived(uint8_t * mac, int *incomingData, uint8_t len) //Функция для обработки принимаемой информации
+void DataRecived(uint8_t * mac, uint8_t *incomingData, uint8_t len) //Функция для обработки принимаемой информации
 {
-  if (incomingData == 1) {
+  if ((int) incomingData == 1) {
     digitalWrite(PIN_RELAY, LOW);
   }
   else {
@@ -78,6 +78,7 @@ void setup() {
 
   esp_now_init(); //Инициилизируем протокол esp now
   esp_now_set_self_role(ESP_NOW_ROLE_COMBO); //Устанавливаем роль combo, чтобы мы могли и отправлять и принимать данные
+  esp_now_register_recv_cb(DataRecived); //Устанавливаем функцию DataRecived для обработки принимаемой информации
   esp_now_add_peer(Address3, ESP_NOW_ROLE_COMBO, 1, NULL, 0); //Добавляем нового пира (esp3), чтобы мы могли отправлять данные 
   esp_now_register_send_cb(DataSent); //Устанавливаем функцию DataSent при отправке данных
 }
