@@ -44,9 +44,9 @@ void DataSent(uint8_t *mac_addr, uint8_t sendStatus) { //Функция при �
   }
 }
 
-void DataRecived(uint8_t * mac, int incomingData, uint8_t len) //Функция для обработки принимаемой информации
+void DataRecived(uint8_t * mac, uint8_t *incomingData, uint8_t len) //Функция для обработки принимаемой информации
 {
-  stepper.runToNewPosition(incomingData/360*stepsPerRevolution);
+  stepper.runToNewPosition((int) incomingData/360.0*stepsPerRevolution);
 }
 
 void setup() {
