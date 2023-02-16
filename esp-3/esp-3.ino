@@ -70,8 +70,8 @@ void DataSent(uint8_t *mac_addr, uint8_t sendStatus) { //Функция при �
   }
   else{
     Serial.print("Delivery fail to ");
-	Serial.println(mac_addr)
   }
+	Serial.println(mac_addr)
 }
 
 //Это функция, используемая для получения показаний
