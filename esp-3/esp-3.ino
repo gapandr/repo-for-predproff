@@ -71,7 +71,12 @@ void DataSent(uint8_t *mac_addr, uint8_t sendStatus) { //Функция при �
   else{
     Serial.print("Delivery fail to ");
   }
-	Serial.println(mac_addr)
+	if (mac_addr == Address1) {
+		Serial.println("esp1");
+	}
+	else {
+		Serial.println("esp2");
+	}
 }
 
 //Это функция, используемая для получения показаний
