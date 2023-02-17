@@ -8,16 +8,17 @@ const char* ssid = "Теплица";       // SSID
 const char* password = "12345678";  // пароль
 
 /* Объявляем переменные */
-float temp1 = 0.0;
-float hum1 = 0.0;
-float temp2 = 0.0;
-float hum2 = 0.0;
-float soil1 = 0.0;
-float soil2 = 0.0;
+float temp1 = -200;
+float hum1 = -200;
+float temp2 = -200;
+float hum2 = -200;
+float soil1 = -200;
+float soil2 = -200;
 int angle = 0;
 int min_soil = 30;
 int min_hum = 25;
 int humid = 0;
+int counter = 0;
 
 // Объявление контаков датчиков 
 #define sensorPower 14
@@ -156,6 +157,7 @@ void setup() {
     //Управление форточкой
     server.on("/angle0", []() {
         angle = 0;
+        Serial.println(angle);
       });
     server.on("/angle30", []() {
         angle = 30;
@@ -182,22 +184,27 @@ void setup() {
 
 void loop() {
   server.handleClient();  //Отслеживаем действия клиента
-    
-  if ((soil1+soil2)/2 > min_soil){ // Реле с поливом, зависящая от температуры
-    digitalWrite(PIN_RELAY, LOW);
-    delay(100);
-  } else {
-    digitalWrite(PIN_RELAY, HIGH);
-    delay(100);
+  if (counter == 7) {
+    if ((soil1+soil2)/2 > min_soil){ // Реле с поливом, зависящая от температуры
+      digitalWrite(PIN_RELAY, LOW);
+      delay(100);
+    } else {
+      digitalWrite(PIN_RELAY, HIGH);
+      delay(100);
+    }
+  
+    esp_now_send(Address1, (uint8_t *) &angle, sizeof(angle));
+  	if ((hum1+hum2)/2 < min_hum) {
+  		humid = 1;
+  	}
+  	else {
+  		humid = 0;
+  	}
+  	esp_now_send(Address2, (uint8_t *) &humid, sizeof(humid));
+    counter = 0;
   }
-
-  esp_now_send(Address1, (uint8_t *) &angle, sizeof(angle));
-	if ((hum1+hum2)/2 < min_hum) {
-		humid = 1;
-	}
-	else {
-		humid = 0;
-	}
-	esp_now_send(Address2, (uint8_t *) &humid, sizeof(humid));
-  delay(10000);
+  else {
+    counter++;  
+  }
+  delay(250);
 }
