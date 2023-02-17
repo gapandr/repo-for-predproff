@@ -37,16 +37,21 @@ message Data;
 void DataSent(uint8_t *mac_addr, uint8_t sendStatus) { //Функция при отправке данных (отладочная информация)
   Serial.print("Last Packet Send Status: ");
   if (sendStatus == 0){
-    Serial.println("Delivery success");
+    Serial.print("Delivery success to ");
   }
   else{
-    Serial.println("Delivery fail");
+    Serial.print("Delivery fail to ");
   }
+  Serial.println(mac_addr[0]);
 }
 
 void DataRecived(uint8_t * mac, uint8_t *incomingData, uint8_t len) //Функция для обработки принимаемой информации
 {
   stepper.runToNewPosition((int) incomingData/360.0*stepsPerRevolution);
+  Serial.print("from ");
+  Serial.print(mac[0]);
+  Serial.print(" recivied ");
+  Serial.println((int) incomingData);
 }
 
 void setup() {
@@ -100,5 +105,4 @@ void loop() {
 
   // Повтор каждые 10 секунд.
   delay(10000);
- 
 }
