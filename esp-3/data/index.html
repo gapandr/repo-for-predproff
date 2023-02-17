@@ -6,20 +6,34 @@
     <title>Теплица</title>
 </head>
 <body>
-    <p class="temp_detector">Температура первого датчика: <span id="temp1">-200</span></p>
-    <p class="hum_detector">Влажность первого датчика: <span id="hum1">-200</span></p>
-    <p class="temp_detector">Температура второго датчика: <span id="temp2">-200</span></p>
-    <p class="hum_detector">Влажность второго датчика: <span id="hum2">-200</span></p>
-    <p class="soil_detector">Влажность почвы 1: <span id="soil1">-200</span></p>
-    <p class="soil_detector">Влажность почвы 2: <span id="soil2">-200</span></p>
-
-    <button id="test_btn" value="OK" type="button" onclick="UpdateTest()">Тест (ты не должен это видеть!)</button>
-    <button id="debug_btn" value="OK" type="button" onclick="DebugMode()">Включение debug режима</button>
-
-    <button onclick="SetAngle(30)">Угол в 30 градусов</button>
-    <button onclick="SetAngle(45)">Угол в 45 градусов</button>
-    <button onclick="SetAngle(90)">Угол в 90 градусов</button>
-    <button onclick="SetAngle(110)">Угол в 110 градусов</button>
-    <button onclick="SetAngle(0)">Угол в 0 градусов</button>
-
+    <h1>Умная Теплица</h1>
+    <div id="sensors">
+        <div class="block">
+            <p class="block-title">Температура</p>
+            <p class="temp_detector">Первый датчик: <span id="temp1">-200.00</span>&deg;C</p>
+            <p class="temp_detector">Второй датчик: <span id="temp2">-200.00</span>&deg;C</p>
+        </div>
+        <div class="block">
+            <p class="block-title">Влажность воздуха</p>
+            <p class="hum_detector">Первый датчик: <span id="hum1">-200.00</span>%</p>
+            <p class="hum_detector">Второй датчик: <span id="hum2">-200.00</span>%</p>
+        </div>
+        <div class="block">
+            <p class="block-title">Влажность почвы</p>
+            <p class="soil_detector">Первый датчик: <span id="soil1">-200.00</span>%</p>
+            <p class="soil_detector">Второй датчик: <span id="soil2">-200.00</span>%</p>
+        </div>
+    </div>
+    <div id="buttons">
+        <h3>Управление форточкой</h3>
+        <button onclick="SetAngle(0)">Угол в 0 &deg;</button>
+        <button onclick="SetAngle(30)">Угол в 30 &deg;</button>
+        <button onclick="SetAngle(45)">Угол в 45 &deg;</button>
+        <button onclick="SetAngle(90)">Угол в 90 &deg;</button>
+        <button onclick="SetAngle(110)">Угол в 110 &deg;</button>
+    </div>
+    <div id="debug_block">
+        <button id="test_btn" value="OK" type="button" onclick="UpdateTest()">Тест (ты не должен это видеть!)</button>
+        <button id="debug_btn" value="OK" type="button" onclick="DebugMode()">Включение debug режима</button>
+    </div>
 </body>
