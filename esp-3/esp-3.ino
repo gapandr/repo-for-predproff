@@ -4,8 +4,8 @@
 #include <espnow.h>
 
 /* Название сети и пароль */
-const char* ssid = "Теплица";       // SSID
-const char* password = "12345678";  // пароль
+const char* ssid = "T104-1-2";       // SSID
+const char* password = "Desyatbukv10";  // пароль
 
 /* Объявляем переменные */
 float temp1 = 0.0;
@@ -34,8 +34,8 @@ IPAddress gateway(10,100,1,1);
 IPAddress subnet(255,255,255,0);
 
 /* Mac адреса других плат */
-uint8_t Address1[] = {0x58,0xBF,0x25,0xDA,0x9C,0x3E}; //esp1
-uint8_t Address2[] = {0xBC,0xDD,0xC2,0x66,0x80,0xA9}; //esp2
+uint8_t Address1[] = {0xC4,0x5B,0xBE,0x63,0x70,0xDC}; //esp1
+uint8_t Address2[] = {0x48,0x3F,0xDA,0x72,0x4F,0x8A}; //esp2
 
 ESP8266WebServer server(80); //Cоздаём сервер
 
@@ -50,7 +50,7 @@ message Data;
 void DataRecived(uint8_t * mac, uint8_t *incomingData, uint8_t len) //Функция для обработки принимаемой информации
 {
   memcpy(&Data, incomingData, sizeof(Data)); //Копируем полученную информацию в переменную Data (чтобы корректно её обработать)
-  if (mac[0] == 88) //Если информация получена с esp1, записываем информацию в переменные temp1, hum1
+  if (mac[0] == 196) //Если информация получена с esp1, записываем информацию в переменные temp1, hum1
   {
     temp1 = Data.temp;
     Serial.println(temp1);
@@ -60,11 +60,9 @@ void DataRecived(uint8_t * mac, uint8_t *incomingData, uint8_t len) //Функц
   else //Иначе (информация получена с esp2), записываем информацию в переменные temp2, hum2
   {
     temp2 = Data.temp;
-    Serial.println(temp2);
     hum2 = Data.hum;
     soil2 = Data.soil;
   }
-  Serial.println("test");
 }
 
 void DataSent(uint8_t *mac_addr, uint8_t sendStatus) { //Функция при отправке данных (отладочная информация)
@@ -108,10 +106,22 @@ void handleCss()  //Клиент запрашивает style.css
 
 void setup() {
     Serial.begin(115200);
-    /* Создаём точку доступа */
-    WiFi.softAP(ssid, password);
-    WiFi.softAPConfig(local_ip, gateway, subnet);
-    delay(100);
+  // Начало подключения Wi-Fi
+  Serial.println();
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");  
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+  Serial.println(WiFi.macAddress());
 
     // Объявляем пин реле как выход
     pinMode(PIN_RELAY, OUTPUT); 
@@ -180,7 +190,7 @@ void setup() {
 }
 
 void loop() {
-  server.handleClient();  //Отслеживаем действия клиента
+server.handleClient();  //Отслеживаем действия клиента
   if (counter == 39) {
     if ((soil1+soil2)/2 > min_soil){ // Реле с поливом, зависящая от температуры
       digitalWrite(PIN_RELAY, LOW);
