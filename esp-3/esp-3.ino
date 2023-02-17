@@ -8,12 +8,12 @@ const char* ssid = "Теплица";       // SSID
 const char* password = "12345678";  // пароль
 
 /* Объявляем переменные */
-float temp1 = -200;
-float hum1 = -200;
-float temp2 = -200;
-float hum2 = -200;
-float soil1 = -200;
-float soil2 = -200;
+float temp1 = 0.0;
+float hum1 = 0.0;
+float temp2 = 0.0;
+float hum2 = 0.0;
+float soil1 = 0.0;
+float soil2 = 0.0;
 int angle = 0;
 int min_soil = 30;
 int min_hum = 25;
@@ -50,18 +50,21 @@ message Data;
 void DataRecived(uint8_t * mac, uint8_t *incomingData, uint8_t len) //Функция для обработки принимаемой информации
 {
   memcpy(&Data, incomingData, sizeof(Data)); //Копируем полученную информацию в переменную Data (чтобы корректно её обработать)
-  if (mac == Address1) //Если информация получена с esp1, записываем информацию в переменные temp1, hum1
+  if (mac[0] == 88) //Если информация получена с esp1, записываем информацию в переменные temp1, hum1
   {
     temp1 = Data.temp;
+    Serial.println(temp1);
     hum1 = Data.hum;
     soil1 = Data.soil;
   }
   else //Иначе (информация получена с esp2), записываем информацию в переменные temp2, hum2
   {
     temp2 = Data.temp;
+    Serial.println(temp2);
     hum2 = Data.hum;
     soil2 = Data.soil;
   }
+  Serial.println("test");
 }
 
 void DataSent(uint8_t *mac_addr, uint8_t sendStatus) { //Функция при отправке данных (отладочная информация)
@@ -72,12 +75,7 @@ void DataSent(uint8_t *mac_addr, uint8_t sendStatus) { //Функция при �
   else{
     Serial.print("Delivery fail to ");
   }
-	if (mac_addr == Address1) {
-		Serial.println("esp1");
-	}
-	else {
-		Serial.println("esp2");
-	}
+	Serial.println(mac_addr[0]);
 }
 
 //Это функция, используемая для получения показаний
@@ -157,7 +155,6 @@ void setup() {
     //Управление форточкой
     server.on("/angle0", []() {
         angle = 0;
-        Serial.println(angle);
       });
     server.on("/angle30", []() {
         angle = 30;
@@ -184,7 +181,7 @@ void setup() {
 
 void loop() {
   server.handleClient();  //Отслеживаем действия клиента
-  if (counter == 7) {
+  if (counter == 39) {
     if ((soil1+soil2)/2 > min_soil){ // Реле с поливом, зависящая от температуры
       digitalWrite(PIN_RELAY, LOW);
       delay(100);
@@ -194,13 +191,13 @@ void loop() {
     }
   
     esp_now_send(Address1, (uint8_t *) &angle, sizeof(angle));
-  	if ((hum1+hum2)/2 < min_hum) {
-  		humid = 1;
-  	}
-  	else {
-  		humid = 0;
-  	}
-  	esp_now_send(Address2, (uint8_t *) &humid, sizeof(humid));
+    if ((hum1+hum2)/2 < min_hum) {
+      humid = 1;
+    }
+    else {
+      humid = 0;
+    }
+    esp_now_send(Address2, (uint8_t *) &humid, sizeof(humid));
     counter = 0;
   }
   else {
