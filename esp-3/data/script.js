@@ -1,9 +1,9 @@
-var temp1 = "default";
-var temp2 = "default";
-var hum1 = "default";
-var hum2 = "default";
-var soil1 = "default";
-var soil2 = "default";
+var temp1 = -200.00;
+var temp2 = -200.00;
+var hum1 = -200.00;
+var hum2 = -200.00;
+var soil1 = -200.00;
+var soil2 = -200.00;
 var response = new Response();
 
 var debug_mode = false;
@@ -44,48 +44,48 @@ function UpdateTest() {
     soil2+=Math.random()*5-2.5;
 }
 
-function AutoUpdate() {
+async function AutoUpdate() {
     //temp 1
     if (!debug_mode) {
-        response = fetch("/temp1");
-        temp1 = response.text();
+        response = await fetch("/temp1");
+        response.text().then(function(result) {temp1 = parseFloat(result)});
     }
     document.getElementById("temp1").innerHTML = temp1.toFixed(2);
 
     //temp 2
     if (!debug_mode) {
-        response = fetch("/temp2");
-        temp2 = response.text();
+        response = await fetch("/temp2");
+        response.text().then(function(result) {temp2 = parseFloat(result)});
     }
     document.getElementById("temp2").innerHTML = temp2.toFixed(2);
 
     //hum1
     if (!debug_mode) {
-        response = fetch("/hum1");
-        hum1 = response.text();
+        response = await fetch("/hum1");
+        response.text().then(function(result) {hum1 = parseFloat(result)});
     }
     document.getElementById("hum1").innerHTML = hum1.toFixed(2);
 
     //hum2
     if (!debug_mode) {
-        response = fetch("/hum2");
-        hum2 = response.text();
+        response = await fetch("/hum2");
+        response.text().then(function(result) {hum2 = parseFloat(result)});
     }
     document.getElementById("hum2").innerHTML = hum2.toFixed(2);
     
     //soil1
     if (!debug_mode) {
-        response = fetch("/soil1");
-        soil1 = response.text();
+        response = await fetch("/soil1");
+        response.text().then(function(result) {soil1 = parseFloat(result)});
     }
     document.getElementById("soil1").innerHTML = soil1.toFixed(2);
     
     //soil2
     if (!debug_mode) {
-        response = fetch("/soil2");
-        soil2 = response.text();
+        response = await fetch("/soil2");
+        response.text().then(function(result) {soil2 = parseFloat(result)});
     }
     document.getElementById("soil2").innerHTML = soil2.toFixed(2);
 }
 
-setInterval(AutoUpdate, 500);
+setInterval(AutoUpdate, 2000);
