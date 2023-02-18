@@ -22,6 +22,7 @@ const int stepsPerRevolution = 2048;
 // Инициализация датчика DHT-11
 DHT dht(DHTPIN, DHTTYPE, 15);
 int output_value;
+int angle = 0;
 
 /* Mac адреса других плат */
 uint8_t Address3[] = {0xc4, 0x5B, 0xBE, 0x73, 0x2A, 0x86}; //esp3
@@ -33,6 +34,12 @@ typedef struct message {
     float soil;
 } message;
 message Data;
+
+//Передаваемая команда
+typedef struct com {
+  uint8_t value;
+} com;
+com command;
 
 void DataSent(uint8_t *mac_addr, uint8_t sendStatus) { //Функция при отправке данных (отладочная информация)
   Serial.print("Last Packet Send Status: ");
@@ -47,11 +54,13 @@ void DataSent(uint8_t *mac_addr, uint8_t sendStatus) { //Функция при �
 
 void DataRecived(uint8_t * mac, uint8_t *incomingData, uint8_t len) //Функция для обработки принимаемой информации
 {
-  //stepper.runToNewPosition((int) incomingData/360.0*stepsPerRevolution);
+  memcpy(&command, incomingData, sizeof(command));
+  angle = command.value;
+  stepper.runToNewPosition((angle/360)*stepsPerRevolution);
   Serial.print("from ");
   Serial.print(mac[0]);
   Serial.print(" recivied ");
-  Serial.println((int) incomingData);
+  Serial.println(angle);
 }
 
 void setup() {
