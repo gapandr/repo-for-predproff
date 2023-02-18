@@ -9,10 +9,10 @@ const char* password = "Desyatbukv10";
 
 // Пины
 #define DHTPIN D7
-#define IN1 5
-#define IN2 4
-#define IN3 14
-#define IN4 12
+#define IN1 D3
+#define IN2 D4
+#define IN3 D5
+#define IN4 D6
 
 // Использование датчика DHT-11
 #define DHTTYPE DHT11
@@ -23,6 +23,7 @@ const int stepsPerRevolution = 2048;
 DHT dht(DHTPIN, DHTTYPE, 15);
 int output_value;
 int angle = 0;
+int steps = 0;
 
 /* Mac адреса других плат */
 uint8_t Address3[] = {0xc4, 0x5B, 0xBE, 0x73, 0x2A, 0x86}; //esp3
@@ -56,7 +57,6 @@ void DataRecived(uint8_t * mac, uint8_t *incomingData, uint8_t len) //Функц
 {
   memcpy(&command, incomingData, sizeof(command));
   angle = command.value;
-  stepper.runToNewPosition((angle/360)*stepsPerRevolution);
   Serial.print("from ");
   Serial.print(mac[0]);
   Serial.print(" recivied ");
@@ -69,8 +69,8 @@ void setup() {
   delay(10);
 
   // set the speed and acceleration
-  stepper.setMaxSpeed(200);
-  stepper.setAcceleration(40);
+  stepper.setMaxSpeed(200.0);
+  stepper.setAcceleration(40.0);
 
   // Инициализация датчика
   dht.begin();
@@ -112,6 +112,10 @@ void loop() {
   //Отправляем данные на esp3
   esp_now_send(Address3, (uint8_t *) &Data, sizeof(Data));
 
+  steps = (angle/360.0)*stepsPerRevolution;
+  Serial.println(steps);
+  stepper.runToNewPosition(steps);
+  
   // Повтор каждые 10 секунд.
   delay(10000);
 }
