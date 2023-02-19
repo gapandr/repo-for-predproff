@@ -17,7 +17,7 @@ const char* password = "Desyatbukv10";
 // Использование датчика DHT-11
 #define DHTTYPE DHT11
 AccelStepper stepper(AccelStepper::HALF4WIRE, IN1, IN3, IN2, IN4);
-const int stepsPerRevolution = 2048;
+const int stepsPerRevolution = 4096;
 
 // Инициализация датчика DHT-11
 DHT dht(DHTPIN, DHTTYPE, 15);
@@ -69,8 +69,8 @@ void setup() {
   delay(10);
 
   // set the speed and acceleration
-  stepper.setMaxSpeed(200.0);
-  stepper.setAcceleration(40.0);
+  stepper.setMaxSpeed(2000.0);
+  stepper.setAcceleration(400.0);
 
   // Инициализация датчика
   dht.begin();
