@@ -69,6 +69,18 @@ button:active
     margin-left: 3.7%;
 }
 
+#water_level, #water_level:active, #water_level:hover, #DHT1, #DHT1:active, #DHT1:hover, #DHT2, #DHT2:active, #DHT2:hover, #s1, #s1:active, #s1:hover, #s2, #s2:active, #s2:hover {
+    background-color: green;
+}
+
+#status {
+    margin-top: 5%;
+}
+
+#debug_block {
+    margin-top: 10%;
+}
+
 #test_btn 
 {
     display: none;
