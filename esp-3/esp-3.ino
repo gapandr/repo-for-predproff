@@ -17,6 +17,8 @@ float soil2 = 0.0;
 int angle = 0;
 int min_soil = 30;
 int min_hum = 25;
+int min_temp = 23;
+int max_temp = 27;
 int humid = 0;
 int counter = 0;
 bool is_watering = false;
@@ -204,14 +206,20 @@ server.handleClient();  //Отслеживаем действия клиента
       delay(100);
     }
     readSensor();
-
+    if ((temp1+temp2)/2.0 < min_temp) {
+      angle = 0;
+    } 
+    else if ((temp1+temp2)/2.0 > max_temp) {
+      angle = 90;
+    }
+    
     esp_now_send(Address1, (uint8_t *) &angle, sizeof(angle));
-    Serial.print("angle= ");
+    Serial.print("angle = ");
     Serial.println((uint8_t) angle);
     esp_now_send(Address2, (uint8_t *) &humid, sizeof(humid));
-    Serial.print("humid= ");
+    Serial.print("humid = ");
     Serial.println((uint8_t) humid);
-    if ((hum1+hum2)/2 < min_hum && is_watering == false) {
+    if ((hum1+hum2)/2.0 < min_hum && is_watering == false) {
       humid = 1;
       is_watering = true;
     }
