@@ -69,8 +69,8 @@ void setup() {
   delay(10);
 
   // set the speed and acceleration
-  stepper.setMaxSpeed(2000.0);
-  stepper.setAcceleration(400.0);
+  stepper.setMaxSpeed(200.0);
+  stepper.setAcceleration(40.0);
 
   // Инициализация датчика
   dht.begin();
