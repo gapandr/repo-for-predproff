@@ -3,8 +3,8 @@
 #include <espnow.h>
 
 // параметры Wi-Fi
-const char* ssid = "T104-1-2";
-const char* password = "Desyatbukv10";
+const char* ssid = "Теплица";
+const char* password = "12345678";
 
 // Пины
 #define DHTPIN D5 // Датчик температуры
@@ -17,7 +17,7 @@ const char* password = "Desyatbukv10";
 DHT dht(DHTPIN, DHTTYPE, 15);
 
 /* Mac адреса других плат */
-uint8_t Address3[] = {0xC4, 0x5B, 0xBE, 0x73, 0x2A, 0x86}; //esp3
+uint8_t Address3[] = {0xA8, 0x48, 0xFA, 0xDC, 0xBD, 0x02}; //esp3
 
 /* Передаваемые данные */
 typedef struct message {
@@ -79,7 +79,6 @@ void setup() {
   Serial.println("WiFi connected");  
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
-  Serial.println(WiFi.macAddress());
 
   esp_now_init(); //Инициилизируем протокол esp now
   esp_now_set_self_role(ESP_NOW_ROLE_COMBO); //Устанавливаем роль combo, чтобы мы могли и отправлять и принимать данные
