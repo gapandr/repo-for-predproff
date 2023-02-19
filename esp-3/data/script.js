@@ -113,10 +113,10 @@ async function AutoUpdate() {
     if (soil2 == 0) {counter_s2 += 1;} else {counter_s2 = 0;}
 
     //statuses update
-    if (counter_DHT1 >= 15) {document.getElementById("DHT1").style.backgroundColor = "red";} else {document.getElementById("DHT1").style.backgroundColor = "green";}
-    if (counter_DHT2 >= 15) {document.getElementById("DHT2").style.backgroundColor = "red";} else {document.getElementById("DHT2").style.backgroundColor = "green";}
-    if (counter_s1 >= 15) {document.getElementById("s1").style.backgroundColor = "red";} else {document.getElementById("s1").style.backgroundColor = "green";}
-    if (counter_s2 >= 15) {document.getElementById("s2").style.backgroundColor = "red";} else {document.getElementById("s2").style.backgroundColor = "green";}
+    if (counter_DHT1 >= 1) {document.getElementById("DHT1").style.backgroundColor = "red";} else {document.getElementById("DHT1").style.backgroundColor = "green";}
+    if (counter_DHT2 >= 1) {document.getElementById("DHT2").style.backgroundColor = "red";} else {document.getElementById("DHT2").style.backgroundColor = "green";}
+    if (counter_s1 >= 1) {document.getElementById("s1").style.backgroundColor = "red";} else {document.getElementById("s1").style.backgroundColor = "green";}
+    if (counter_s2 >= 1) {document.getElementById("s2").style.backgroundColor = "red";} else {document.getElementById("s2").style.backgroundColor = "green";}
 }
 
 setInterval(AutoUpdate, 2000);
