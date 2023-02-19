@@ -19,6 +19,7 @@ int min_soil = 30;
 int min_hum = 25;
 int humid = 0;
 int counter = 0;
+bool is_watering = false;
 
 // Объявление контаков датчиков 
 #define sensorPower 14
@@ -27,11 +28,6 @@ int counter = 0;
 
 // Значение для хранения уровня воды
 int val = 0;
-
-/* Настройки IP адреса */
-IPAddress local_ip(10,100,1,1);
-IPAddress gateway(10,100,1,1);
-IPAddress subnet(255,255,255,0);
 
 /* Mac адреса других плат */
 uint8_t Address1[] = {0xC4,0x5B,0xBE,0x63,0x70,0xDC}; //esp1
@@ -53,7 +49,6 @@ void DataRecived(uint8_t * mac, uint8_t *incomingData, uint8_t len) //Функц
   if (mac[0] == 196) //Если информация получена с esp1, записываем информацию в переменные temp1, hum1
   {
     temp1 = Data.temp;
-    Serial.println(temp1);
     hum1 = Data.hum;
     soil1 = Data.soil;
   }
@@ -178,6 +173,9 @@ void setup() {
     server.on("/angle110", []() {
         angle = 110;
       });
+    server.on("/humid", []() {
+        humid = 1;
+      });
     
     server.begin(); //Запускаем сервер
 
@@ -192,22 +190,29 @@ void setup() {
 void loop() {
 server.handleClient();  //Отслеживаем действия клиента
   if (counter == 39) {
-    if ((soil1+soil2)/2 > min_soil){ // Реле с поливом, зависящая от температуры
+    if ((soil1+soil2)/2 < min_soil){ // Реле с поливом, зависящая от температуры
       digitalWrite(PIN_RELAY, LOW);
       delay(100);
     } else {
       digitalWrite(PIN_RELAY, HIGH);
       delay(100);
     }
-  
+    readSensor();
+
     esp_now_send(Address1, (uint8_t *) &angle, sizeof(angle));
-    if ((hum1+hum2)/2 < min_hum) {
+    Serial.print("angle= ");
+    Serial.println((uint8_t) angle);
+    esp_now_send(Address2, (uint8_t *) &humid, sizeof(humid));
+    Serial.print("humid= ");
+    Serial.println((uint8_t) humid);
+    if ((hum1+hum2)/2 < min_hum && is_watering == false) {
       humid = 1;
+      is_watering = true;
     }
     else {
       humid = 0;
+      is_watering = false;
     }
-    esp_now_send(Address2, (uint8_t *) &humid, sizeof(humid));
     counter = 0;
   }
   else {
