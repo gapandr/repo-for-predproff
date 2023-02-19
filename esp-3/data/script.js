@@ -4,7 +4,12 @@ var hum1 = -200.00;
 var hum2 = -200.00;
 var soil1 = -200.00;
 var soil2 = -200.00;
+var water_level = 100;
 var response = new Response();
+var counter_DHT1 = 0;
+var counter_DHT2 = 0;
+var counter_s1 = 0;
+var counter_s2 = 0;
 
 var debug_mode = false;
 
@@ -21,7 +26,11 @@ function DebugMode() {
 }
 
 function SetAngle(angle) {
-    fetch("/angle"+angle)
+    fetch("/angle"+angle);
+}
+
+function humid() {
+    fetch("/humid");
 }
 
 function UpdateTest() {
@@ -86,6 +95,28 @@ async function AutoUpdate() {
         response.text().then(function(result) {soil2 = parseFloat(result)});
     }
     document.getElementById("soil2").innerHTML = soil2.toFixed(2);
+
+    //water_level
+    response = await fetch("/water_level");
+    response.text().then(function(result) {water_level = parseInt(result)});
+    if (water_level<30) {
+        document.getElementById("water_level").style.backgroundColor = "red";
+    }
+    else {
+        document.getElementById("water_level").style.backgroundColor = "green";
+    }
+
+    //statuses counters
+    if (temp1 == 0) {counter_DHT1 += 1;} else {counter_DHT1 = 0;}
+    if (temp2 == 0) {counter_DHT2 += 1;} else {counter_DHT2 = 0;}
+    if (soil1 == 0) {counter_s1 += 1;} else {counter_s1 = 0;}
+    if (soil2 == 0) {counter_s2 += 1;} else {counter_s2 = 0;}
+
+    //statuses update
+    if (counter_DHT1 >= 15) {document.getElementById("DHT1").style.backgroundColor = "red";} else {document.getElementById("DHT1").style.backgroundColor = "green";}
+    if (counter_DHT2 >= 15) {document.getElementById("DHT2").style.backgroundColor = "red";} else {document.getElementById("DHT2").style.backgroundColor = "green";}
+    if (counter_s1 >= 15) {document.getElementById("s1").style.backgroundColor = "red";} else {document.getElementById("s1").style.backgroundColor = "green";}
+    if (counter_s2 >= 15) {document.getElementById("s2").style.backgroundColor = "red";} else {document.getElementById("s2").style.backgroundColor = "green";}
 }
 
 setInterval(AutoUpdate, 2000);
