@@ -1,0 +1,60 @@
+#include "DHT.h"
+#include <AccelStepper.h>
+
+#define DHTPIN 13
+#define DHTTYPE DHT11
+#define IN1 5
+#define IN2 4
+#define IN3 14
+#define IN4 12
+
+DHT dht(DHTPIN, DHTTYPE, 15);
+AccelStepper stepper(AccelStepper::HALF4WIRE, IN1, IN3, IN2, IN4);
+const int stepsPerRevolution = 2048;
+
+void setup() {
+  Serial.begin(115200);
+  dht.begin();
+
+  // set the speed and acceleration
+  stepper.setMaxSpeed(200);
+  stepper.setAcceleration(40);
+  // set target position
+  stepper.moveTo(512);
+
+}
+
+void open(){
+  stepper.moveTo(512);
+  while (stepper.currentPosition() != 512)
+    stepper.run();
+  stepper.stop();
+  stepper.runToPosition();
+  stepper.stop();
+  delay(300000);
+}
+
+void close() {
+  stepper.moveTo(-stepper.currentPosition());
+  while (stepper.currentPosition() != 512) 
+    stepper.run();
+  stepper.stop(); 
+  stepper.runToPosition();
+  stepper.stop();
+  delay(300000);
+}
+
+void loop() {
+  int elevated_temp = 28;
+  float actual_temp = dht.readTemperature();
+  Serial.print(actual_temp);
+
+  if (actual_temp >= elevated_temp) {
+    stepper.runToNewPosition(512);
+  }
+  else {
+    stepper.runToNewPosition(0);
+  }
+  
+  delay(1000);
+}
