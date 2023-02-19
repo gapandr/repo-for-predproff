@@ -1,87 +1,47 @@
-body 
-{
-    background-color: burlywood;
-    font-family: Arial;
-    margin: 0%;
-}
+<head>
+    <meta charset="UTF-8">
+    <script src="script.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
 
-h1
-{
-    text-align: center;
-    color: blueviolet;
-    border: 4px solid white;
-    background-color: white;
-}
-
-h3
-{
-    text-align: center; 
-    margin-left: -9%;
-    color: red;
-}
-
-#sensors 
-{
-    width: 100%;
-    margin-left: 3.5%;
-    margin-bottom: 2%;
-}
-
-.block 
-{
-    display: inline-block;
-    text-align: center;
-    width: 30%;
-    border: 3px solid purple;
-    background-color: bisque;
-}
-
-.block-title
-{
-    font-size: 20px;
-    margin: 0%;
-    background-color: purple;
-    color: red;
-}
-
-button
-{
-    background-color: coral;
-    padding: .7em 1.5em;
-    margin-right: 4%;
-    width: 14.8%;
-}
-
-button:hover 
-{
-    background-color: chocolate;
-}
-
-button:active 
-{
-    background-color: sandybrown;
-}
-
-#buttons
-{
-    width: 100%;
-    margin: 2%;
-    margin-left: 3.7%;
-}
-
-#water_level, #water_level:active, #water_level:hover, #DHT1, #DHT1:active, #DHT1:hover, #DHT2, #DHT2:active, #DHT2:hover, #s1, #s1:active, #s1:hover, #s2, #s2:active, #s2:hover {
-    background-color: green;
-}
-
-#status {
-    margin-top: 5%;
-}
-
-#debug_block {
-    margin-top: 10%;
-}
-
-#test_btn 
-{
-    display: none;
-}
+    <title>Теплица</title>
+</head>
+<body>
+    <h1>Умная Теплица</h1>
+    <div id="sensors">
+        <div class="block">
+            <p class="block-title">Температура</p>
+            <p class="temp_detector">Первый датчик: <span id="temp1">-200.00</span>&deg;C</p>
+            <p class="temp_detector">Второй датчик: <span id="temp2">-200.00</span>&deg;C</p>
+        </div>
+        <div class="block">
+            <p class="block-title">Влажность воздуха</p>
+            <p class="hum_detector">Первый датчик: <span id="hum1">-200.00</span>%</p>
+            <p class="hum_detector">Второй датчик: <span id="hum2">-200.00</span>%</p>
+        </div>
+        <div class="block">
+            <p class="block-title">Влажность почвы</p>
+            <p class="soil_detector">Первый датчик: <span id="soil1">-200.00</span>%</p>
+            <p class="soil_detector">Второй датчик: <span id="soil2">-200.00</span>%</p>
+        </div>
+    </div>
+    <div id="buttons">
+        <h3>Управление форточкой</h3>
+        <button onclick="SetAngle(0)">Угол в 0 &deg;</button>
+        <button onclick="SetAngle(30)">Угол в 30 &deg;</button>
+        <button onclick="SetAngle(45)">Угол в 45 &deg;</button>
+        <button onclick="SetAngle(90)">Угол в 90 &deg;</button>
+        <button onclick="SetAngle(110)">Угол в 110 &deg;</button>
+    </div>
+    <button onclick="humid()">Включить увлажнитель воздуха</button>
+    <div id="status">
+    	  <button id="water_level">Низкий уровень воды</button>
+        <button id="DHT1">Состояние DHT1</button>
+        <button id="DHT2">Состояние DHT2</button>
+        <button id="s1">Состояние soil1</button>
+        <button id="s2">Состояние soil2</button>
+    </div>
+    <div id="debug_block">
+        <button id="test_btn" value="OK" type="button" onclick="UpdateTest()">Тест (ты не должен это видеть!)</button>
+        <button id="debug_btn" value="OK" type="button" onclick="DebugMode()">Включение debug режима</button>
+    </div>
+</body>
