@@ -32,6 +32,14 @@
         <button onclick="SetAngle(90)">Угол в 90 &deg;</button>
         <button onclick="SetAngle(110)">Угол в 110 &deg;</button>
     </div>
+    <button onclick="humid()">Включить увлажнитель воздуха</button>
+    <div id="status">
+    	  <button id="water_level">Низкий уровень воды</button>
+        <button id="DHT1">Состояние DHT1</button>
+        <button id="DHT2">Состояние DHT2</button>
+        <button id="s1">Состояние soil1</button>
+        <button id="s2">Состояние soil2</button>
+    </div>
     <div id="debug_block">
         <button id="test_btn" value="OK" type="button" onclick="UpdateTest()">Тест (ты не должен это видеть!)</button>
         <button id="debug_btn" value="OK" type="button" onclick="DebugMode()">Включение debug режима</button>
